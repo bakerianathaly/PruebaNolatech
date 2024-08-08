@@ -17,5 +17,5 @@ app.use(express.urlencoded({ extended: false }))
 app.use('/api/v1', router)
 app.listen(port, function () {
     connectDB()
-    console.log(`Api corriendo en https://localhost:${port}!`)
+    console.log(`Api corriendo en http://localhost:${port}!`)
 })
