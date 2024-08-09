@@ -10,7 +10,7 @@ const userRouter = express.Router()
 userRouter.post('/registroUsuario', registroUsuario)
 userRouter.post('/login',  login)
 userRouter.put('/update',jwtValidator,updateUser)
-userRouter.put('/delete', jwtValidator,deleteUser)
+userRouter.put('/desactivarUsuario', jwtValidator,deleteUser)
 userRouter.get('/get',get)
 
 export default userRouter

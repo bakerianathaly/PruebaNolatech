@@ -160,7 +160,7 @@ export const updateUser = async (req, res) =>{
         }
 
         //Consulta para ver si el usuario existe 
-        var existingUser = await User.findById(datosActualizar.id).exec() 
+        var existingUser = await User.findOne({_id:datosActualizar.id, is_active: true}).exec() 
         //Validación por si el usuario no existe retorne un mensaje de error
         if(!existingUser){
             return res.status(409).send({
@@ -259,39 +259,32 @@ export const updateUser = async (req, res) =>{
 
 export const deleteUser = async (req, res) => {
     var data = req.body //Datos de el usuario que vienen en el cuerpo de la petición
-    var existingUser = await User.findOne({ email: data.email}).exec() //Consulta para ver si el usuario existe 
+    var existingUser = await User.findOne({ _id: data.id, is_active: true}).exec() //Consulta para ver si el usuario existe 
 
     if(!existingUser){
         //Validación por si el usuario no existe retorne un mensaje de error
         return res.status(409).send({
-            status: "409",
-            response:"Conflict",
-            message:"El usuario no existe"
+            success: false,
+            message:"El usuario seleccionado no existe.",
+            outcome: []
         }) 
     }
     else{
         try{
-            //Se intenta eliminar el usuario, buscando por el ID del mismo 
-            User.findByIdAndRemove(existingUser._id).exec((err, doc) => {
-                if (err) {
-                    //Validación por si ocurrio algún error al eliminar el usuario con mongoose
-                    return res.send(500, {error: err});
-                } 
-                else {
-                    //Si no hubo ningun error dentro con mongoose y la eliminación del registro se retorna el mensaje de exito
-                    return res.status(200).send({
-                        status: "200",
-                        response:"OK",
-                        message: "Se a eliminado al usuario",
-                    })
-                }
-            });
+            //Se intenta desactivar el usuario, buscando por el ID del mismo 
+            User.findByIdAndUpdate(data.id,{is_active:false}).exec()
+            return res.status(200).send({
+                success: true,
+                message:"Se a desactivado al usuario exitosamente.",
+                outcome: []
+            }) 
         }catch(err){
-            //Retorno de mensaje de error en caso de que el intento de eliminar el registro no funcionara
+            console.log(err)
+            //Mensaje de error por si no se pudo registrar el usuario
             return res.status(404).send({
-                status: "404",
-                response:"Not Found",
-                message: "No se pudo eliminar al usuario debido a un error"
+                success: false,
+                message: "Error al desactivar al usuario, por favor intente nuevamente",
+                outcome: []
             })
         }
     }
