@@ -9,8 +9,8 @@ const userRouter = express.Router()
 
 userRouter.post('/registroUsuario', registroUsuario)
 userRouter.post('/login',  login)
-userRouter.post('/update',jwtValidator,updateUser)
-userRouter.post('/delete', jwtValidator,deleteUser)
+userRouter.put('/update',jwtValidator,updateUser)
+userRouter.put('/delete', jwtValidator,deleteUser)
 userRouter.get('/get',get)
 
 export default userRouter

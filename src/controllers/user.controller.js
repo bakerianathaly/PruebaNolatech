@@ -146,67 +146,115 @@ export const login = async (req, res) => {
 }
 
 export const updateUser = async (req, res) =>{
-    var data = req.body //Datos de el usuario que vienen en el cuerpo de la petición
-    var id = data.id //ID del usuario en la BD
-    var existingUser = await User.findById(id).exec() //Consulta para ver si el usuario existe 
+    try{
+        //Datos de el usuario que vienen en el cuerpo de la petición
+        var datosActualizar = req.body
 
-    if(!existingUser){
-        //Validación por si el usuario no existe retorne un mensaje de error
-        return res.status(409).send({
-            status: "409",
-            response:"Conflict",
-            message:"El usuario no existe"
-        }) 
-    }
-    else if(data.name == "" || data.lastName == "" || data.email == "" || data.username == "" || data.password == ""){
-        //Validación para comprobar si los datos no vinieron vacios
-        return res.status(406).send({
-            status: "406",
-            response:"Not Acceptable",
-            message:"Todos los campos son requeridos para la actualizació del usuario"
-        })
-    }
-    else if(/^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i.test(data.email) != true){
-        //Validación para ver si el email tiene los caracteres/formato valido    
-        return res.status(406).send({
-            status: "406",
-            response:"Not Acceptable",
-            message:"El correo tiene  un formato erroneo"
-        })
-    }
-    else if (data.password.length < 8 ) {
-        //Validación para ver si la contraseña tiene el tamaño minimo requerido
-        return res.status(406).send({
-            status: "406",
-            response:"Not Acceptable",
-            message:"La contraseña debe ser de minimo 8 digitos"
-        })
-
-    }
-    else{
-        try{
-            //Se intenta hacer la actualización de los datos del usuario, buscando por el ID del mismo y enviando los datos
-            User.findByIdAndUpdate(id,data,{upsert:true},function(err, doc) {  
-                if (err) {
-                    //Validación por si ocurrio algún error dentro de la actualizació con mongoose
-                    return res.send(500, {error: err});
-                }
-                //Si no hubo ningun error dentro con mongoose y la actualización, se retorna el mensaje de exito
-                return res.status(200).send({
-                    status: "200",
-                    response:"OK",
-                    message: "La actualizacion a sido exitosa",
-                })
-            })
-        }catch(err){
-            //Retorno de mensaje de error en caso de que el intento de actualizar no funcionara
-            return res.status(404).send({
-                status: "404",
-                response:"Not Found",
-                message: "La actualización no pudo proceder debido a un error"
-            })
+        // Se valida, por precaucion, que el id del usuario venga en la datosActualizar
+        if(!datosActualizar.id){
+            return res.status(409).send({
+                success: false,
+                message:"El identificador del usuario no fue enviado.",
+                outcome: []
+            }) 
         }
+
+        //Consulta para ver si el usuario existe 
+        var existingUser = await User.findById(datosActualizar.id).exec() 
+        //Validación por si el usuario no existe retorne un mensaje de error
+        if(!existingUser){
+            return res.status(409).send({
+                success: false,
+                message:"El usuario al cual se intenta actualizar no existe.",
+                outcome: []
+            }) 
+        }
+
+        // Se valida si la informacion que viene es la clave, el rol,el correo o el username para hacer otras validaciones antes de actualizar
+        //Validacion del correo, se verifica el formato y si ya existe
+        if(datosActualizar.email != undefined){
+            if(/^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i.test(datosActualizar.email) != true){
+                //Validación para ver si el email tiene los caracteres/formato valido    
+                return res.status(406).send({
+                    status: "406",
+                    response:"Not Acceptable",
+                    message:"El correo tiene  un formato erroneo"
+                })
+            }
+
+            //Consulta para ver si el correo ya existe 
+            const existingEmail = await User.findOne({ email: datosActualizar.email}).exec()
+            if(existingEmail){
+                //Validación para ver si el email o el username existen el la BD
+                return res.status(409).send({
+                    success: false,
+                    message:"El email colocado ya existe.",
+                    outcome: []
+                }) 
+            }
+        }
+
+        //Validacion del nombre de usuario, se verifica si ya existe
+        if(datosActualizar.username != undefined){
+            //Consulta para ver si alguno registro en la BD tiene el username
+            const existingUsername = await User.findOne({ username: datosActualizar.username}).exec() 
+
+            if(existingUsername){
+                //Validación para ver si el email o el username existen el la BD
+                return res.status(409).send({
+                    success: false,
+                    message:"El usuario colocado ya existe.",
+                    outcome: []
+                }) 
+            }
+        }
+
+        //Validacion de la clave, por si viene una nueva encriptarla
+        if(datosActualizar.password != undefined){
+            if (datosActualizar.password.length < 8 ) {
+                //Validación para ver si la contraseña tiene el tamaño minimo requerido
+                return res.status(406).send({
+                    success: false,
+                    message:"La contraseña debe ser de minimo 8 digitos",
+                    outcome: []
+                })
+        
+            }
+
+            //Encriptacion de la calve
+            datosActualizar.password = CryptoJS.MD5(datosActualizar.password).toString()
+        }
+
+        // Validacion del role para verificar el tipo de rol sea: manager, empleado o admin
+        if(datosActualizar.role != undefined){
+            if(!(roleTypes.includes(datosActualizar.role))){
+                return res.status(406).send({
+                    success: false,
+                    message:"El rol seleccionado no es valido.",
+                    outcome: []
+                })
+            }
+        }
+        
+        // Actualiza solo los campos que están presentes en datosActualizar
+        Object.assign(existingUser,datosActualizar)
+    
+        //Se intenta hacer la actualización de los datos del usuario, buscando por el ID del mismo y enviando los datos
+        User.findByIdAndUpdate(datosActualizar.id,existingUser,{upsert:true}).exec()
+        return res.status(200).send({
+            success: true,
+            message: "La actualización de los datos del usuario fue exitosamente.",
+            outcome: []
+        })
+    }catch(err){
+        //Mensaje de error por si no se pudo registrar el usuario
+        return res.status(404).send({
+            success: false,
+            message: "Erro al intentar actualizar el usuario, por favor intente nuevamente.",
+            outcome: []
+        })
     }
+    
 }
 
 export const deleteUser = async (req, res) => {
