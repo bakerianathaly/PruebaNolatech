@@ -1,0 +1,1 @@
+export const roleTypes = ['ADMIN','EMPLEADO','MANAGER']

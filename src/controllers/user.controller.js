@@ -1,9 +1,10 @@
 //Models 
 import {User} from '../models/user.js'
 import jwt from 'jsonwebtoken'
+import {roleTypes} from '../utils/common.js'
 const SECRET_KEY="secretkey123456"
 
-export const signUp = async (req, res) => {
+export const registroUsuario = async (req, res) => {
     var data = req.body //Datos de el usuario que vienen en el cuerpo de la petición
     var existingUser = await User.findOne({ email: data.email}).exec() //Consulta para ver si el correo ya existe 
     var existingUsername = await User.findOne({ username: data.username}).exec() //Consulta para ver si alguno registro en la BD tiene el username
@@ -16,12 +17,12 @@ export const signUp = async (req, res) => {
             message:"El email o el usuario ya existe"
         }) 
     }
-    else if(data.name == "" || data.lastName == "" || data.password == "" || data.email == "" || data.username == "" || data.cedula == ""){
+    else if(data.name == "" || data.lastName == "" || data.password == "" || data.email == "" || data.username == "" || data.role == ""){
         //Validación para validar que no se hayan enviado ningun campo vacio de los que son requeridos
         return res.status(406).send({
             status: "406",
             response:"Not Acceptable",
-            message:"Todos los campos son requeridos obligatorios para el registro de usuario"
+            message:"Todos los campos son requeridos para el registro de usuario"
         })
     }
     else if(/^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i.test(data.email) != true){
@@ -29,7 +30,7 @@ export const signUp = async (req, res) => {
         return res.status(406).send({
             status: "406",
             response:"Not Acceptable",
-            message:"El correo tiene  un formato erroneo"
+            message:"El correo tiene un formato erroneo"
         })
     }
     else if(data.password.length < 8){
@@ -40,10 +41,20 @@ export const signUp = async (req, res) => {
             message:"La contraseña debe ser de minimo 8 digitos"
         })
     }
-    else{
+    else if(!(data.roles in roleTypes)){
+        //Validación para verificar el tipo de rol sea: manager, empleado o admin
+        return res.status(406).send({
+            status: "406",
+            response:"Not Acceptable",
+            message:"pepe"
+        })
+    }
+    else
+    {
         try{
             //Se intenta registrar el usuario creando un objeto del modelo, luego de crear el objeto se envia a registrarse en la BD
             //En caso de que no ocurra ningun error se regresa un status 200 de exito
+            data.role = data.role.toUpperCase()
             var newUser = new User(data)
             var register = await newUser.save()
             return res.status(200).send({
@@ -53,6 +64,7 @@ export const signUp = async (req, res) => {
                 id: register._id
             })
         }catch(err){
+            console.log(err)
             //Mensaje de error por si no se pudo registrar el usuario
             return res.status(404).send({
                 status: "404",
