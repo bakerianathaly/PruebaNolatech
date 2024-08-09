@@ -1,75 +1,77 @@
 //Models 
 import {User} from '../models/user.js'
 import jwt from 'jsonwebtoken'
+import CryptoJS from 'crypto-js'
 import {roleTypes} from '../utils/common.js'
-const SECRET_KEY="secretkey123456"
+const SECRET_KEY= process.env.SECRET_KEY
 
 export const registroUsuario = async (req, res) => {
-    var data = req.body //Datos de el usuario que vienen en el cuerpo de la petición
-    var existingUser = await User.findOne({ email: data.email}).exec() //Consulta para ver si el correo ya existe 
-    var existingUsername = await User.findOne({ username: data.username}).exec() //Consulta para ver si alguno registro en la BD tiene el username
+    //Datos de el usuario que vienen en el cuerpo de la petición
+    var data = req.body
+
+    //Se cambia el rol del usuario a letras mayusculas
+    data.role = data.role.toUpperCase()
+
+    //Consulta para ver si el correo ya existe 
+    const existingUser = await User.findOne({ email: data.email}).exec()
+
+    //Consulta para ver si alguno registro en la BD tiene el username
+    const existingUsername = await User.findOne({ username: data.username}).exec() 
 
     if(existingUser || existingUsername){
         //Validación para ver si el email o el username existen el la BD
         return res.status(409).send({
-            status: "409",
             response:"Conflict",
-            message:"El email o el usuario ya existe"
+            message:"El email o el usuario ya existe."
         }) 
     }
     else if(data.name == "" || data.lastName == "" || data.password == "" || data.email == "" || data.username == "" || data.role == ""){
         //Validación para validar que no se hayan enviado ningun campo vacio de los que son requeridos
         return res.status(406).send({
-            status: "406",
             response:"Not Acceptable",
-            message:"Todos los campos son requeridos para el registro de usuario"
+            message:"Todos los campos son requeridos para el registro de usuario."
         })
     }
     else if(/^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i.test(data.email) != true){
         //Validación para ver si el email tiene los caracteres/formato valido    
         return res.status(406).send({
-            status: "406",
             response:"Not Acceptable",
-            message:"El correo tiene un formato erroneo"
+            message:"El correo tiene un formato erroneo."
         })
     }
     else if(data.password.length < 8){
         //Validación para ver si la contraseña tiene el tamaño minimo requerido
         return res.status(406).send({
-            status: "406",
             response:"Not Acceptable",
-            message:"La contraseña debe ser de minimo 8 digitos"
+            message:"La contraseña debe tener un minimo 8 digitos."
         })
     }
-    else if(!(data.roles in roleTypes)){
+    else if(!(roleTypes.includes(data.role))){
         //Validación para verificar el tipo de rol sea: manager, empleado o admin
         return res.status(406).send({
-            status: "406",
             response:"Not Acceptable",
-            message:"pepe"
+            message:"El rol seleccionado no es valido."
         })
     }
     else
     {
         try{
+            //Encriptacion de la calve
+            data.password = CryptoJS.MD5(data.password).toString()
+
             //Se intenta registrar el usuario creando un objeto del modelo, luego de crear el objeto se envia a registrarse en la BD
             //En caso de que no ocurra ningun error se regresa un status 200 de exito
-            data.role = data.role.toUpperCase()
             var newUser = new User(data)
-            var register = await newUser.save()
+            await newUser.save()
             return res.status(200).send({
-                status: "200",
                 response:"OK",
-                message: "Registro exitoso",
-                id: register._id
+                message: "Se registro el usuario exitosamente,",
             })
         }catch(err){
-            console.log(err)
             //Mensaje de error por si no se pudo registrar el usuario
             return res.status(404).send({
-                status: "404",
                 response:"Not Found",
-                message: "El registro no pudo proceder debido a un error"
+                message: "Erro al intentar crear el usuario, por favor intente nuevamente."
             })
         }
     }
