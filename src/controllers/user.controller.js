@@ -21,36 +21,41 @@ export const registroUsuario = async (req, res) => {
     if(existingUser || existingUsername){
         //Validación para ver si el email o el username existen el la BD
         return res.status(409).send({
-            response:"Conflict",
-            message:"El email o el usuario ya existe."
+            success: false,
+            message:"El email o el usuario ya existe.",
+            outcome: []
         }) 
     }
     else if(data.name == "" || data.lastName == "" || data.password == "" || data.email == "" || data.username == "" || data.role == ""){
         //Validación para validar que no se hayan enviado ningun campo vacio de los que son requeridos
         return res.status(406).send({
-            response:"Not Acceptable",
-            message:"Todos los campos son requeridos para el registro de usuario."
+            success: false,
+            message:"Todos los campos son requeridos para el registro de usuario.",
+            outcome: []
         })
     }
     else if(/^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i.test(data.email) != true){
         //Validación para ver si el email tiene los caracteres/formato valido    
         return res.status(406).send({
-            response:"Not Acceptable",
-            message:"El correo tiene un formato erroneo."
+            success: false,
+            message:"El correo tiene un formato erroneo.",
+            outcome: []
         })
     }
     else if(data.password.length < 8){
         //Validación para ver si la contraseña tiene el tamaño minimo requerido
         return res.status(406).send({
-            response:"Not Acceptable",
-            message:"La contraseña debe tener un minimo 8 digitos."
+            success: false,
+            message:"La contraseña debe tener un minimo 8 digitos.",
+            outcome: []
         })
     }
     else if(!(roleTypes.includes(data.role))){
         //Validación para verificar el tipo de rol sea: manager, empleado o admin
         return res.status(406).send({
-            response:"Not Acceptable",
-            message:"El rol seleccionado no es valido."
+            success: false,
+            message:"El rol seleccionado no es valido.",
+            outcome: []
         })
     }
     else
@@ -64,87 +69,79 @@ export const registroUsuario = async (req, res) => {
             var newUser = new User(data)
             await newUser.save()
             return res.status(200).send({
-                response:"OK",
+                success: true,
                 message: "Se registro el usuario exitosamente,",
+                outcome: []
             })
         }catch(err){
             //Mensaje de error por si no se pudo registrar el usuario
             return res.status(404).send({
-                response:"Not Found",
-                message: "Erro al intentar crear el usuario, por favor intente nuevamente."
+                success: false,
+                message: "Erro al intentar crear el usuario, por favor intente nuevamente.",
+                outcome: []
             })
         }
     }
 }
 
-export const loggedIn = async (req, res) =>{
-    var data = req.body //Datos de el usuario que vienen en el cuerpo de la petición
-    var user = await User.findOne({username: data.username}).exec() //Consulta para ver si el usuario existe 
-
-    if(data.username == "" || data.password == "" ){
+export const login = async (req, res) => {
+    //Datos de el usuario que vienen en el cuerpo de la petición
+    var data = req.body
+    try{
         //Validación para comprobar si los datos no vinieron vacios
-        return res.status(406).send({
-            status: "406",
-            response:"Not Acceptable",
-            message:"El el nombre de usuario y la contraseña son campos obligatorios"
-        })
-    }
-    else if(!user){
-        //Validación por si el usuario no existe retorne un mensaje de error
-        return res.status(409).send({
-            status: "409",
-            response:"Conflict",
-            message:"El email o la contraseña son incorrectos"
-        }) 
-    }
-    else{
-        try{
-            var enteredPassword=data.password
-
-            if((enteredPassword == user.password)){
-                //Validación para comprobar si la contraseña en la BD es la misma que la coloco el usuario
-
-                var expiresIn= "7d" //Asignación del tiempo de expiración del token, de 7 días
-                var accessToken=jwt.sign({id:user.id},SECRET_KEY,{expiresIn:expiresIn}) //Generación del JWT con la fecha de expiración, la clave y el secret key
-
-                let datos= {
-                    //JSON de los datos del usuario que seran retornados, incluyendo el token y su tiempo de expiración
-                    id:user.id,
-                    name: user.name,
-                    lastName: user.lastName,
-                    email: user.email,
-                    cedula: user.cedula,
-                    username: user.username,
-                    accessToken: accessToken,
-                    expiresIn: expiresIn
-                }
-               
-                //Retorno de mensaje de exito
-                return res.status(200).send({
-                    datos,
-                    status: "200",
-                    response:"OK",
-                    message: "Inicio de sesión exitoso" 
-                })
-            
-            }
-            else{
-                //Retorno de mensaje si ocurrio algún error
-                return res.status(409).send({
-                    status: "409",
-                    response:"Conflict",
-                    message:"El email o la contraseña son incorrectos"
-                })   
-            }
-        
-        }catch(err){
-            //Retorno de mensaje si ocurrio algún error
-            return res.status(404).send({
-                status: "404",
-                response:"Not Found",
-                message: "El inicio de sesión a fallado debido a un error"
+        if(data.username == "" || data.password == "" ){
+            return res.status(406).send({
+                success: false,
+                message:"El el nombre de usuario y la contraseña son campos obligatorios.",
+                outcome: []
             })
         }
+        
+        // Se busca al usuario por el username y validando que este activo en el sistema
+        let existingUser = await User.findOne({username: data.username, is_active: true}).exec()
+        if(!existingUser){
+            return res.status(409).send({
+                success: false,
+                message:"Usuario o contraseña incorrectos.",
+                outcome: []
+            }) 
+        }
+  
+        // Se encripta la clave para compararla con la que se encontro en la DB
+        data.password = CryptoJS.MD5(data.password).toString()
+
+        if (data.password != existingUser.password){
+            return res.status(409).send({
+                success: false,
+                message:"Usuario o contraseña incorrectos.",
+                outcome: []
+            }) 
+        }
+        
+        //Generación del JWT con la fecha de expiración, la clave y el secret key
+        let token = jwt.sign({
+            id:existingUser._id,
+            role:existingUser.role,
+            username:existingUser.username
+        },SECRET_KEY) 
+        
+        return res.status(200).send({
+            success:true,
+            message: `Bienvenido ${existingUser.name} ${existingUser.lastName} al sistema.`,
+            outcome: [{
+                "username": existingUser.username,
+                "token": token
+            }]
+            
+        })
+    }catch(err){
+        console.log(err)
+        //Mensaje de error por si no se pudo registrar el usuario
+        return res.status(404).send({
+            success: false,
+            message: "El inicio de sesión no pudo proceder debido a un error",
+            outcome: []
+        })
     }
 }
 

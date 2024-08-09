@@ -1,6 +1,6 @@
-import { registroUsuario,loggedIn, updateUser, deleteUser,get } from './user.controller.js';
+import { registroUsuario,login, updateUser, deleteUser,get } from './user.controller.js';
 
 
 export {
-    registroUsuario,loggedIn, updateUser, deleteUser,get
+    registroUsuario,login, updateUser, deleteUser,get
 }
