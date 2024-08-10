@@ -13,7 +13,7 @@ app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ extended: false }))
 
 // routes
-app.use('/api/v1', router)
+app.use('/api', router)
 app.get('/', (req, res) => {
     console.log('pepe')
 });

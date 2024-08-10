@@ -25,8 +25,6 @@ export const jwtValidator = async (req, res, next) => {
         outcome: []
       }) 
     }
-    // eslint-disable-next-line no-console
-    console.info(`${chalk.green('[server]:')} token`, existingUser)
 
     return next()
   } catch (e) {

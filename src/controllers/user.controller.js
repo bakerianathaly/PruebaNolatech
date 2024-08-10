@@ -290,17 +290,18 @@ export const deleteUser = async (req, res) => {
     }
 }
 
-export const get = async (req, res) => {
+export const detalleUsuario = async (req, res) => {
     let data = req.params
-    var existingUser = await User.findOne({ id: data.id}).exec() //Consulta para ver si el usuario existe 
-
+    
+    //Consulta para traer el detalle del usuario
+    var existingUser = await User.findById(data.id).exec() 
     if(!existingUser){
         //Validación por si el usuario no existe retorne un mensaje de error
-        return res.status(409).send({
-            status: "409",
-            response:"Conflict",
-            message:"El usuario no existe"
-        }) 
+        return res.status(404).send({
+            success: false,
+            message: "El usuario seleccionado no existe.",
+            outcome: []
+        })
     }
     else{
         let datos= {
@@ -309,16 +310,37 @@ export const get = async (req, res) => {
             name: existingUser.name,
             lastName: existingUser.lastName,
             email: existingUser.email,
-            cedula: existingUser.cedula,
+            role: existingUser.role,
             username: existingUser.username
         }
        
         //Retorno de mensaje de exito
         return res.status(200).send({
-            datos,
-            status: "200",
-            response:"OK",
-            message: "Inicio de sesión exitoso" 
+            success: true,
+            message: "Se encontro el detalle del usuario exitosamente.",
+            outcome: [datos]
+        })
+    }
+}
+
+export const listadoUsuarios = async (req, res) => {
+    //Consulta para traer el detalle del usuario
+    var usuarios = await User.find({},"name lastName role username email is_active").exec()
+
+    if(!usuarios){
+        //Validación por si el usuario no existe retorne un mensaje de error
+        return res.status(404).send({
+            success: false,
+            message: "No existen usuarios en el sistema.",
+            outcome: []
+        })
+    }
+    else{       
+        //Retorno de mensaje de exito
+        return res.status(200).send({
+            success: true,
+            message: "Se encontraron todos los usuarios exitosamente.",
+            outcome: usuarios
         })
     }
 }

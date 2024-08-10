@@ -9,6 +9,6 @@ router.get('/', (req, res) => {
   res.status(404).send('Page not found')
 })
 
-router.use('/users', userRouter)
+router.use('/auth', userRouter)
 
 export { router }
