@@ -1,6 +1,10 @@
-import { registroUsuario,login, updateUser, deleteUser,detalleUsuario,listadoUsuarios } from './user.controller.js';
+import { registroUsuario,login, updateUser, deleteUser,detalleUsuario,listadoUsuarios } from './user.controller.js'
+import { registroEmpleado,updateEmpleado,detalleEmpleado,listadoEmpleados } from './employees.controller.js'
 
 
 export {
-    registroUsuario,login, updateUser, deleteUser,detalleUsuario,listadoUsuarios
+    //Usuarios
+    registroUsuario,login, updateUser, deleteUser,detalleUsuario,listadoUsuarios,
+    //Empleados
+    registroEmpleado,updateEmpleado,detalleEmpleado,listadoEmpleados
 }

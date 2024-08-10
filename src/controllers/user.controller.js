@@ -327,7 +327,7 @@ export const listadoUsuarios = async (req, res) => {
     //Consulta para traer el detalle del usuario
     var usuarios = await User.find({},"name lastName role username email is_active").exec()
 
-    if(!usuarios){
+    if(usuarios.length == 0){
         //Validación por si el usuario no existe retorne un mensaje de error
         return res.status(404).send({
             success: false,

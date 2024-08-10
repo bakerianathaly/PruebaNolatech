@@ -1,5 +1,6 @@
 import express from 'express'
 import userRouter from './user.routes.js'
+import employeesRouter from './employees.routes.js'
 
 const router = express.Router()
 
@@ -10,5 +11,6 @@ router.get('/', (req, res) => {
 })
 
 router.use('/auth', userRouter)
+router.use('/employees',employeesRouter)
 
 export { router }
