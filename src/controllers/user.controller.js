@@ -28,7 +28,7 @@ export const registroUsuario = async (req, res) => {
     }
     else if(data.name == "" || data.lastName == "" || data.password == "" || data.email == "" || data.username == "" || data.role == ""){
         //Validación para validar que no se hayan enviado ningun campo vacio de los que son requeridos
-        return res.status(406).send({
+        return res.status(422).send({
             success: false,
             message:"Todos los campos son requeridos para el registro de usuario.",
             outcome: []
@@ -36,7 +36,7 @@ export const registroUsuario = async (req, res) => {
     }
     else if(/^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i.test(data.email) != true){
         //Validación para ver si el email tiene los caracteres/formato valido    
-        return res.status(406).send({
+        return res.status(422).send({
             success: false,
             message:"El correo tiene un formato erroneo.",
             outcome: []
@@ -44,7 +44,7 @@ export const registroUsuario = async (req, res) => {
     }
     else if(data.password.length < 8){
         //Validación para ver si la contraseña tiene el tamaño minimo requerido
-        return res.status(406).send({
+        return res.status(422).send({
             success: false,
             message:"La contraseña debe tener un minimo 8 digitos.",
             outcome: []
@@ -52,7 +52,7 @@ export const registroUsuario = async (req, res) => {
     }
     else if(!(roleTypes.includes(data.role))){
         //Validación para verificar el tipo de rol sea: manager, empleado o admin
-        return res.status(406).send({
+        return res.status(422).send({
             success: false,
             message:"El rol seleccionado no es valido.",
             outcome: []
@@ -75,7 +75,7 @@ export const registroUsuario = async (req, res) => {
             })
         }catch(err){
             //Mensaje de error por si no se pudo registrar el usuario
-            return res.status(204).send({
+            return res.status(400).send({
                 success: false,
                 message: "Error al intentar crear el usuario, por favor intente nuevamente.",
                 outcome: []
@@ -90,9 +90,9 @@ export const login = async (req, res) => {
     try{
         //Validación para comprobar si los datos no vinieron vacios
         if(data.username == "" || data.password == "" ){
-            return res.status(406).send({
+            return res.status(422).send({
                 success: false,
-                message:"El el nombre de usuario y la contraseña son campos obligatorios.",
+                message:"El nombre de usuario y la contraseña son campos obligatorios.",
                 outcome: []
             })
         }
@@ -137,7 +137,7 @@ export const login = async (req, res) => {
     }catch(err){
         console.log(err)
         //Mensaje de error por si no se pudo registrar el usuario
-        return res.status(204).send({
+        return res.status(400).send({
             success: false,
             message: "El inicio de sesión no pudo proceder debido a un error",
             outcome: []
@@ -152,7 +152,7 @@ export const updateUser = async (req, res) =>{
 
         // Se valida, por precaucion, que el id del usuario venga en la datosActualizar
         if(!datosActualizar.id){
-            return res.status(409).send({
+            return res.status(412).send({
                 success: false,
                 message:"El identificador del usuario no fue enviado.",
                 outcome: []
@@ -174,11 +174,10 @@ export const updateUser = async (req, res) =>{
         //Validacion del correo, se verifica el formato y si ya existe
         if(datosActualizar.email != undefined){
             if(/^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i.test(datosActualizar.email) != true){
-                //Validación para ver si el email tiene los caracteres/formato valido    
-                return res.status(406).send({
-                    status: "406",
-                    response:"Not Acceptable",
-                    message:"El correo tiene  un formato erroneo"
+                return res.status(422).send({
+                    success: false,
+                    message:"El correo tiene un formato erroneo.",
+                    outcome: []
                 })
             }
 
@@ -213,7 +212,7 @@ export const updateUser = async (req, res) =>{
         if(datosActualizar.password != undefined){
             if (datosActualizar.password.length < 8 ) {
                 //Validación para ver si la contraseña tiene el tamaño minimo requerido
-                return res.status(406).send({
+                return res.status(422).send({
                     success: false,
                     message:"La contraseña debe ser de minimo 8 digitos",
                     outcome: []
@@ -228,7 +227,7 @@ export const updateUser = async (req, res) =>{
         // Validacion del role para verificar el tipo de rol sea: manager, empleado o admin
         if(datosActualizar.role != undefined){
             if(!(roleTypes.includes(datosActualizar.role))){
-                return res.status(406).send({
+                return res.status(422).send({
                     success: false,
                     message:"El rol seleccionado no es valido.",
                     outcome: []
@@ -248,7 +247,7 @@ export const updateUser = async (req, res) =>{
         })
     }catch(err){
         //Mensaje de error por si no se pudo registrar el usuario
-        return res.status(204).send({
+        return res.status(400).send({
             success: false,
             message: "Error al intentar actualizar el usuario, por favor intente nuevamente.",
             outcome: []
@@ -281,7 +280,7 @@ export const deleteUser = async (req, res) => {
         }catch(err){
             console.log(err)
             //Mensaje de error por si no se pudo registrar el usuario
-            return res.status(204).send({
+            return res.status(400).send({
                 success: false,
                 message: "Error al desactivar al usuario, por favor intente nuevamente",
                 outcome: []

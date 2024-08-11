@@ -9,7 +9,7 @@ export const registroPregunta = async (req, res) => {
         data.tipo = data.tipo.toUpperCase()
         //Validacion para que todos los campos esten llenos
         if(data.question == "" || data.tipo == "" || data.escala == ""){
-            return res.status(406).send({
+            return res.status(422).send({
                 success: false,
                 message:"Todos los campos son requeridos para el registro de una pregunta.",
                 outcome: []
@@ -18,7 +18,7 @@ export const registroPregunta = async (req, res) => {
 
         //Validacion apra verificar que el tipo de pregunta sea los validos
         if(!(questionTypes.includes(data.tipo))){
-            return res.status(406).send({
+            return res.status(422).send({
                 success: false,
                 message:"El tipo de pregunta seleccionado no es valido.",
                 outcome: []
@@ -27,7 +27,7 @@ export const registroPregunta = async (req, res) => {
 
         //Validacion para verificar que si el tipo es "MULTIPLE" tiene que haber mas de una escala de medicion
         if(data.tipo.toUpperCase() == 'MULTIPLE' && data.escala.length < 2){
-            return res.status(406).send({
+            return res.status(422).send({
                 success: false,
                 message:"Para una pregunta de seleccion multiple debe existir más de una escala.",
                 outcome: []
@@ -40,12 +40,12 @@ export const registroPregunta = async (req, res) => {
         await newPreguntas.save()
         return res.status(200).send({
             success: true,
-            message: "Se registro la pregunta exitosamente,",
+            message: "Se registro la pregunta exitosamente.",
             outcome: []
         })
     }catch(err){
         //Mensaje de error por si no se pudo registrar la pregunta
-        return res.status(204).send({
+        return res.status(400).send({
             success: false,
             message: "Error al intentar crear la pregunta, por favor intente nuevamente.",
             outcome: []
@@ -61,9 +61,9 @@ export const updatePregunta = async (req, res) =>{
 
         // Se valida, por precaucion, que el id dla pregunta venga en la datosActualizar
         if(!datosActualizar.id){
-            return res.status(409).send({
+            return res.status(412).send({
                 success: false,
-                message:"El identificador dla pregunta no fue enviado.",
+                message:"El identificador de la pregunta no fue enviado.",
                 outcome: []
             }) 
         }
@@ -85,7 +85,7 @@ export const updatePregunta = async (req, res) =>{
             datosActualizar.tipo = datosActualizar.tipo.toUpperCase()
             //Validacion apra verificar que el tipo de pregunta sea los validos
             if(!(questionTypes.includes(datosActualizar.tipo))){
-                return res.status(406).send({
+                return res.status(422).send({
                     success: false,
                     message:"El tipo de pregunta seleccionado no es valido.",
                     outcome: []
@@ -104,7 +104,7 @@ export const updatePregunta = async (req, res) =>{
                 datosActualizar.tipo.toUpperCase() == 'MULTIPLE' && 
                 datosActualizar.escala.length < 2
             ){
-                return res.status(406).send({
+                return res.status(422).send({
                     success: false,
                     message:"Para una pregunta de seleccion multiple debe existir más de una escala.",
                     outcome: []
@@ -113,7 +113,7 @@ export const updatePregunta = async (req, res) =>{
 
             // 2 vez por si el valor tipo no viene, entonces validar con lo que tiene en la DB
             if(existingQuestion.tipo.toUpperCase() == 'MULTIPLE' && datosActualizar.escala.length < 2){
-                return res.status(406).send({
+                return res.status(422).send({
                     success: false,
                     message:"Para una pregunta de seleccion multiple debe existir más de una escala.",
                     outcome: []
@@ -151,7 +151,7 @@ export const listadoPreguntas = async (req, res) => {
             tipo \
             escala.texto \
             escala.valor"
-    ).exec();
+    ).exec()
  
     if(questions.length == 0){
         //Validación por si la pregunta no existe retorne un mensaje de error

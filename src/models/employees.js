@@ -64,5 +64,5 @@ const employeesSchema = new Schema({
     }
 })
 
-const Employees = mongoose.model('Employees', employeesSchema);
+const Employees = mongoose.model('Employees', employeesSchema)
 export {Employees}

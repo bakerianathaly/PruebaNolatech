@@ -15,10 +15,21 @@ export const registroEmpleado = async (req, res) => {
                 outcome: []
             }) 
         }
+
+        //Consulta para ver si el correo ya existe 
+        const existingEmail = await Employees.findOne({ email: data.email}).exec()
+        if(existingEmail){
+            //Validación para ver si el email o el username existen el la BD
+            return res.status(409).send({
+                success: false,
+                message:"El email colocado ya existe.",
+                outcome: []
+            }) 
+        }
         
         //Validación para ver si el email tiene los caracteres/formato valido    
         if(/^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i.test(data.email) != true){
-            return res.status(406).send({
+            return res.status(422).send({
                 success: false,
                 message:"El correo tiene un formato erroneo.",
                 outcome: []
@@ -31,12 +42,12 @@ export const registroEmpleado = async (req, res) => {
         await newEmployees.save()
         return res.status(200).send({
             success: true,
-            message: "Se registro el empleado exitosamente,",
+            message: "Se registro el empleado exitosamente.",
             outcome: []
         })
     }catch(err){
         //Mensaje de error por si no se pudo registrar el empleado
-        return res.status(204).send({
+        return res.status(400).send({
             success: false,
             message: "Error al intentar crear el empleado, por favor intente nuevamente.",
             outcome: []
@@ -75,10 +86,10 @@ export const updateEmpleado = async (req, res) =>{
         if(datosActualizar.email != undefined){
             if(/^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i.test(datosActualizar.email) != true){
                 //Validación para ver si el email tiene los caracteres/formato valido    
-                return res.status(406).send({
-                    status: "406",
-                    response:"Not Acceptable",
-                    message:"El correo tiene  un formato erroneo"
+                return res.status(422).send({
+                    success: false,
+                    message:"El correo tiene un formato erroneo.",
+                    outcome: []
                 })
             }
 
@@ -121,7 +132,7 @@ export const updateEmpleado = async (req, res) =>{
         })
     }catch(err){
         //Mensaje de error por si no se pudo registrar el empleado
-        return res.status(204).send({
+        return res.status(400).send({
             success: false,
             message: "Error al intentar actualizar el empleado, por favor intente nuevamente.",
             outcome: []

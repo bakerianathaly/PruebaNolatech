@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
     }
 })
 
-export const enviarCorreo = (destinatario, nombreEmpleado, fechaLimite) => {
+export const enviarCorreo = (destinatario, nombreEmpleado, fechaLimite, nombreEvaluacion) => {
     const mailOptions = {
         from: process.env.CORREO_ELECTRONICO,
         to: destinatario,
@@ -23,15 +23,15 @@ export const enviarCorreo = (destinatario, nombreEmpleado, fechaLimite) => {
             Esto es parte de nuestro esfuerzo continuo para aumentar nuestro impacto, 
             apoyar el desarrollo del personal y promover la equidad y la transparencia. 
 
-            La evaluación estara disponible hasta el dia ${fechaLimite}.
+            La evaluación "${nombreEvaluacion}" estara disponible hasta el dia ${fechaLimite}.
             
             Gracias por tu esfuerzo y dedicación a nuestro equipo.`
     }
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-            console.log(error);
+            console.log(error)
         } else {
-            console.log('Correo enviado: ' + info.response);
+            console.log('Correo enviado: ' + info.response)
         }
     })
 }

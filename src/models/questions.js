@@ -23,5 +23,5 @@ const preguntasSchema = new Schema({
     }
 })
 
-const Preguntas = mongoose.model('Preguntas', preguntasSchema);
+const Preguntas = mongoose.model('Preguntas', preguntasSchema)
 export {Preguntas}

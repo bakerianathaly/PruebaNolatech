@@ -27,5 +27,5 @@ const evaluacionSchema = new Schema({
     }
 })
 
-const Evaluacion = mongoose.model('Evaluacion', evaluacionSchema);
+const Evaluacion = mongoose.model('Evaluacion', evaluacionSchema)
 export {Evaluacion}

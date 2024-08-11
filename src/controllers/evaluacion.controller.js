@@ -23,7 +23,7 @@ export const registroEvaluacion = async (req, res) => {
 
         //Validacion de que se intenta crear una evaluacion con al menos una pregunta
         if(data.preguntas.length == 0){
-            return res.status(400).send({
+            return res.status(422).send({
                 success: false,
                 message: "No se puede crear una evaluación sin una pregunta, por favor seleccione al menos una.",
                 outcome: []
@@ -32,7 +32,7 @@ export const registroEvaluacion = async (req, res) => {
 
         //Validacion apra verificar que el periodo de la evaluación sea los validos
         if(!(periodsTime.includes(data.periodo))){
-            return res.status(406).send({
+            return res.status(422).send({
                 success: false,
                 message:"El periodo de la evaluación seleccionado no es valido.",
                 outcome: []
@@ -79,7 +79,7 @@ export const updateEvaluacion = async (req, res) =>{
         if(!existingEvaluation){
             return res.status(409).send({
                 success: false,
-                message:"la evaluación al cual se intenta actualizar no existe.",
+                message:"La evaluación al cual se intenta actualizar no existe.",
                 outcome: []
             }) 
         }
@@ -88,7 +88,7 @@ export const updateEvaluacion = async (req, res) =>{
         //Validacion de que se intenta crear una evaluacion con al menos una pregunta
         if(datosActualizar.preguntas.length != undefined){
             if(datosActualizar.preguntas.length == 0){
-                return res.status(400).send({
+                return res.status(422).send({
                     success: false,
                     message: "No se puede actualizar una evaluación sin una pregunta, por favor seleccione al menos una.",
                     outcome: []
@@ -101,7 +101,7 @@ export const updateEvaluacion = async (req, res) =>{
             datosActualizar.periodo = datosActualizar.periodo.toUpperCase()
             //Validacion apra verificar que el periodo de pregunta sea los validos
             if(!(periodsTime.includes(datosActualizar.periodo))){
-                return res.status(406).send({
+                return res.status(422).send({
                     success: false,
                     message:"El periodo de la evaluación seleccionado no es valido.",
                     outcome: []
@@ -121,7 +121,7 @@ export const updateEvaluacion = async (req, res) =>{
         })
     }catch(err){
         //Mensaje de error por si no se pudo registrar la evaluación
-        return res.status(204).send({
+        return res.status(400).send({
             success: false,
             message: "Error al intentar actualizar la evaluación, por favor intente nuevamente.",
             outcome: []
@@ -210,6 +210,15 @@ export const asignarEvaluacionEmpleado = async (req, res) => {
     try{
         //Datos de la evaluación que vienen en el cuerpo de la petición
         var data = req.body
+        
+        //Validacion para verificar si ambos ID fueron enviados
+        if(data.empleado == '' || data.evaluacion == '' || data.empleado == undefined || data.evaluacion == undefined ){
+            return res.status(409).send({
+                success: false,
+                message:"El identificador de la evaluación o del empleado no fue enviado.",
+                outcome: []
+            }) 
+        }
 
         //Primero busco la informacion del empleado para obtener su correo electronico
         //para enviarle la notificacion de que tiene una evaluacion pendiente
@@ -228,7 +237,8 @@ export const asignarEvaluacionEmpleado = async (req, res) => {
         //esto facilita buscar las evaluaciones al momento de ser contestadas
         const evaluation = await Evaluacion.findById(
             data.evaluacion,
-            'limitDate'
+            'limitDate\
+            name'
         ).populate(
             {
                 path: 'preguntas',
@@ -260,12 +270,13 @@ export const asignarEvaluacionEmpleado = async (req, res) => {
         enviarCorreo(
             employee.email,
             `${employee.name} ${employee.lastName}`,
-            moment(evaluation.limitDate).format('DD-MM-YYYY')
+            moment(evaluation.limitDate).format('DD-MM-YYYY'),
+            evaluation.name
         )
 
         return res.status(200).send({
             success: true,
-            message: "Se encontraron todos los empleados exitosamente.",
+            message: "Se asigno al empleado una evaluación exitosamente.",
             outcome: []
         })
     }catch(err){

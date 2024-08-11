@@ -8,5 +8,5 @@ const respuestasSchema = new Schema({
     }
 })
 
-const Respuestas = mongoose.model('Respuestas', respuestasSchema);
+const Respuestas = mongoose.model('Respuestas', respuestasSchema)
 export {Respuestas}
