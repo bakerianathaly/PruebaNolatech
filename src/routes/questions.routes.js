@@ -3,7 +3,8 @@ import express from 'express'
 import {
     registroPregunta,updatePregunta,detallePregunta,listadoPreguntas
 } from '../controllers/index.controller.js'
-import {jwtValidator} from '../utils/jwt.js'
+import {jwtValidator} from '../middlewares/jwt.js'
+import {roleValidator} from '../middlewares/roleValidator.js'
 
 const questionsRouter = express.Router()
 
@@ -42,7 +43,7 @@ const questionsRouter = express.Router()
  *       422:
  *         description: Error en la validación de la información
  */
-questionsRouter.post('/', jwtValidator,registroPregunta)
+questionsRouter.post('/', jwtValidator,roleValidator(['ADMIN','MANAGER'], 'crear una pregunta'),registroPregunta)
 
 /**
  * @swagger
@@ -87,7 +88,7 @@ questionsRouter.post('/', jwtValidator,registroPregunta)
  *       412:
  *         description: El ID de la pregunta no fue enviado
  */
-questionsRouter.put('/',jwtValidator,updatePregunta)
+questionsRouter.put('/',jwtValidator,roleValidator(['ADMIN','MANAGER'], 'editar una pregunta'),updatePregunta)
 
 /**
  * @swagger
@@ -108,7 +109,7 @@ questionsRouter.put('/',jwtValidator,updatePregunta)
  *       204:
  *         description: No existe la pregunta en el sistema
  */
-questionsRouter.get('/:id',jwtValidator,detallePregunta)
+questionsRouter.get('/:id',jwtValidator,roleValidator(['ADMIN','MANAGER'], 'obtener el detalle de una pregunta'),detallePregunta)
 
 /**
  * @swagger
@@ -122,6 +123,6 @@ questionsRouter.get('/:id',jwtValidator,detallePregunta)
  *       204:
  *         description: No existen preguntas en el sistema para listar
  */
-questionsRouter.get('/', jwtValidator,listadoPreguntas)
+questionsRouter.get('/', jwtValidator,roleValidator(['ADMIN','MANAGER'], 'listar las preguntas'),listadoPreguntas)
 
 export default questionsRouter

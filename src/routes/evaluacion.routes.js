@@ -3,7 +3,8 @@ import express from 'express'
 import {
     registroEvaluacion,updateEvaluacion,detalleEvaluacion,listadoEvaluacions,asignarEvaluacionEmpleado
 } from '../controllers/index.controller.js'
-import {jwtValidator} from '../utils/jwt.js'
+import {jwtValidator} from '../middlewares/jwt.js'
+import {roleValidator} from '../middlewares/roleValidator.js'
 
 const evaluationsRouter = express.Router()
 
@@ -42,10 +43,10 @@ const evaluationsRouter = express.Router()
  *       422:
  *         description: Error en la validación de la información
  */
-evaluationsRouter.post('/', jwtValidator,registroEvaluacion)
+evaluationsRouter.post('/', jwtValidator,roleValidator(['ADMIN','MANAGER'], 'crear una evaluacion'),registroEvaluacion)
 
 
-//evaluationsRouter.post('/:id/submit', jwtValidator,registroEvaluacion)
+//evaluationsRouter.post('/:id/submit', jwtValidator,roleValidator(['ADMIN','MANAGER','EMPLEADO'], 'contestar una evaluación'),registroEvaluacion)
 
 /**
  * @swagger
@@ -76,7 +77,7 @@ evaluationsRouter.post('/', jwtValidator,registroEvaluacion)
  *       409:
  *         description: El id del empleado y el id de la evaluación son requeridos
  */
-evaluationsRouter.post('/asignar/evaluacion',jwtValidator,asignarEvaluacionEmpleado)
+evaluationsRouter.post('/asignar/evaluacion',jwtValidator,roleValidator(['ADMIN','MANAGER'], 'asignar una evaluacion a un empleado'),asignarEvaluacionEmpleado)
 
 /**
  * @swagger
@@ -117,7 +118,7 @@ evaluationsRouter.post('/asignar/evaluacion',jwtValidator,asignarEvaluacionEmple
  *       422:
  *         description: Error en la validación de la información
  */
-evaluationsRouter.put('/',jwtValidator,updateEvaluacion)
+evaluationsRouter.put('/',jwtValidator,roleValidator(['ADMIN','MANAGER'], 'editar una evaluación'),updateEvaluacion)
 
 /**
  * @swagger
@@ -138,7 +139,7 @@ evaluationsRouter.put('/',jwtValidator,updateEvaluacion)
  *       204:
  *         description: No existe la evaluación en el sistema
  */
-evaluationsRouter.get('/:id',jwtValidator,detalleEvaluacion)
+evaluationsRouter.get('/:id',jwtValidator,roleValidator(['ADMIN','MANAGER'], 'obtener el detalle de una evaluación'),detalleEvaluacion)
 
 /**
  * @swagger
@@ -152,7 +153,7 @@ evaluationsRouter.get('/:id',jwtValidator,detalleEvaluacion)
  *       204:
  *         description: No existen evaluaciones en el sistema para listar
  */
-evaluationsRouter.get('/', jwtValidator,listadoEvaluacions)
+evaluationsRouter.get('/', jwtValidator,roleValidator(['ADMIN','MANAGER'], 'listar las evaluaciones'),listadoEvaluacions)
 
 
 export default evaluationsRouter

@@ -3,7 +3,8 @@ import express from 'express'
 import {
   registroUsuario,login, updateUser, deleteUser,detalleUsuario,listadoUsuarios
 } from '../controllers/index.controller.js'
-import {jwtValidator} from '../utils/jwt.js'
+import {jwtValidator} from '../middlewares/jwt.js'
+import {roleValidator} from '../middlewares/roleValidator.js'
 
 const userRouter = express.Router()
 
@@ -114,7 +115,7 @@ userRouter.post('/login',  login)
  *       412:
  *         description: El ID del usuario no fue enviado
  */
-userRouter.put('/update',jwtValidator,updateUser)
+userRouter.put('/update',jwtValidator,roleValidator(['ADMIN'], 'editar un usuario'),updateUser)
 
 /**
  * @swagger
@@ -141,7 +142,7 @@ userRouter.put('/update',jwtValidator,updateUser)
  *       409:
  *         description: El usuario seleccionado no existe
  */
-userRouter.put('/desactivarUsuario', jwtValidator,deleteUser)
+userRouter.put('/desactivarUsuario', jwtValidator,roleValidator(['ADMIN'], 'desactivar un usuario'),deleteUser)
 
 /**
  * @swagger
@@ -162,7 +163,7 @@ userRouter.put('/desactivarUsuario', jwtValidator,deleteUser)
  *       204:
  *         description: No existe el usuario en el sistema
  */
-userRouter.get('/detalleUsuario/:id',jwtValidator,detalleUsuario)
+userRouter.get('/detalleUsuario/:id',jwtValidator,roleValidator(['ADMIN'], 'obtener el detalle de un usuario'),detalleUsuario)
 
 /**
  * @swagger
@@ -176,6 +177,6 @@ userRouter.get('/detalleUsuario/:id',jwtValidator,detalleUsuario)
  *       204:
  *         description: No existen usuarios en el sistema para listar
  */
-userRouter.get('/listaUsuarios', jwtValidator,listadoUsuarios)
+userRouter.get('/listaUsuarios', jwtValidator,roleValidator(['ADMIN'], 'listar todos los usuarios'),listadoUsuarios)
 
 export default userRouter

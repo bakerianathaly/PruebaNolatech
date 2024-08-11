@@ -1,9 +1,9 @@
 import express from 'express'
-
 import {
     registroEmpleado,updateEmpleado,detalleEmpleado,listadoEmpleados
 } from '../controllers/index.controller.js'
-import {jwtValidator} from '../utils/jwt.js'
+import {jwtValidator} from '../middlewares/jwt.js'
+import {roleValidator} from '../middlewares/roleValidator.js'
 
 const employeesRouter = express.Router()
 
@@ -76,7 +76,7 @@ const employeesRouter = express.Router()
  *       400:
  *         description: Error al intentar crear el empleado
  */
-employeesRouter.post('/', jwtValidator,registroEmpleado)
+employeesRouter.post('/', jwtValidator, roleValidator(['ADMIN','MANAGER'], 'crear un empleado'), registroEmpleado)
 
 /**
  * @swagger
@@ -151,7 +151,7 @@ employeesRouter.post('/', jwtValidator,registroEmpleado)
  *       400:
  *         description: Error al intentar crear el empleado
  */
-employeesRouter.put('/',jwtValidator,updateEmpleado)
+employeesRouter.put('/',jwtValidator,roleValidator(['ADMIN','MANAGER'], 'editar un empleado'),updateEmpleado)
 
 /**
  * @swagger
@@ -172,7 +172,7 @@ employeesRouter.put('/',jwtValidator,updateEmpleado)
  *       204:
  *         description: No existe empleado en el sistema
  */
-employeesRouter.get('/:id',jwtValidator,detalleEmpleado)
+employeesRouter.get('/:id',jwtValidator,roleValidator(['ADMIN','MANAGER'], 'obtener el detalle de un empleado'),detalleEmpleado)
 
 /**
  * @swagger
@@ -186,6 +186,6 @@ employeesRouter.get('/:id',jwtValidator,detalleEmpleado)
  *       204:
  *         description: No existen empleados en el sistema para listar
  */
-employeesRouter.get('/', jwtValidator,listadoEmpleados)
+employeesRouter.get('/', jwtValidator,roleValidator(['ADMIN','MANAGER'], 'listar todos los empleados'),listadoEmpleados)
 
 export default employeesRouter
