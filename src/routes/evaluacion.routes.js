@@ -113,9 +113,7 @@ evaluationsRouter.post('/asignar/evaluacion',jwtValidator,asignarEvaluacionEmple
  *       400:
  *         description: No se puede crear una evaluación sin una pregunta
  *       409:
- *         description: El identificador de la evaluación no fue enviado.
- *       409:
- *         description: La evaluación al cual se intenta actualizar no existe.
+ *         description: El identificador de la evaluación no fue enviado o la evaluación al cual se intenta actualizar no existe.
  *       422:
  *         description: Error en la validación de la información
  */

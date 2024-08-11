@@ -108,9 +108,7 @@ userRouter.post('/login',  login)
  *       400:
  *         description: Error al intentar actualizar el usuario
  *       409:
- *         description: El email o el usuario ya existen
- *       409:
- *         description: El usuario al cual se intenta actualizar no existe
+ *         description: El email o el usuario ya existen o el usuario al cual se intenta actualizar no existe
  *       422:
  *         decription: Error en las validaciones de los datos antes de actualizar el usuario
  *       412:
