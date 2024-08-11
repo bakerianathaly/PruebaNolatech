@@ -38,7 +38,7 @@ export const registroEmpleado = async (req, res) => {
         //Mensaje de error por si no se pudo registrar el empleado
         return res.status(204).send({
             success: false,
-            message: "Erro al intentar crear el empleado, por favor intente nuevamente.",
+            message: "Error al intentar crear el empleado, por favor intente nuevamente.",
             outcome: []
         })
     }
@@ -123,7 +123,7 @@ export const updateEmpleado = async (req, res) =>{
         //Mensaje de error por si no se pudo registrar el empleado
         return res.status(204).send({
             success: false,
-            message: "Erro al intentar actualizar el empleado, por favor intente nuevamente.",
+            message: "Error al intentar actualizar el empleado, por favor intente nuevamente.",
             outcome: []
         })
     }

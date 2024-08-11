@@ -47,7 +47,7 @@ export const registroPregunta = async (req, res) => {
         //Mensaje de error por si no se pudo registrar la pregunta
         return res.status(204).send({
             success: false,
-            message: "Erro al intentar crear la pregunta, por favor intente nuevamente.",
+            message: "Error al intentar crear la pregunta, por favor intente nuevamente.",
             outcome: []
         })
     }
@@ -136,7 +136,7 @@ export const updatePregunta = async (req, res) =>{
         //Mensaje de error por si no se pudo registrar la pregunta
         return res.status(400).send({
             success: false,
-            message: "Erro al intentar actualizar la regunta, por favor intente nuevamente.",
+            message: "Error al intentar actualizar la regunta, por favor intente nuevamente.",
             outcome: []
         })
     }

@@ -10,18 +10,17 @@ const evaluacionSchema = new Schema({
         type: String,
         required: true
     },
-    status:{
-        type:String,
-        required: true,
-    },
-    type:{
-        type:String,
-        required: true,
-    },
     limitDate:{
         type:Date,
         required: true
     },
+    // Array de ObjectId que referencian a las preguntas
+    preguntas: [
+        { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'Preguntas' 
+        }
+    ],
     is_active:{
         type: Boolean,
         default: true

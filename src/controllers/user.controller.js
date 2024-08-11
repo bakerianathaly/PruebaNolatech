@@ -77,7 +77,7 @@ export const registroUsuario = async (req, res) => {
             //Mensaje de error por si no se pudo registrar el usuario
             return res.status(204).send({
                 success: false,
-                message: "Erro al intentar crear el usuario, por favor intente nuevamente.",
+                message: "Error al intentar crear el usuario, por favor intente nuevamente.",
                 outcome: []
             })
         }
@@ -250,7 +250,7 @@ export const updateUser = async (req, res) =>{
         //Mensaje de error por si no se pudo registrar el usuario
         return res.status(204).send({
             success: false,
-            message: "Erro al intentar actualizar el usuario, por favor intente nuevamente.",
+            message: "Error al intentar actualizar el usuario, por favor intente nuevamente.",
             outcome: []
         })
     }
