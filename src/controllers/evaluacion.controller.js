@@ -1,6 +1,9 @@
 //Models 
 import {Evaluacion} from '../models/evaluacion.js'
 import {periodsTime} from '../utils/common.js'
+import {enviarCorreo} from '../utils/email.js'
+import {Employees} from '../models/employees.js'
+import moment from 'moment'
 
 export const registroEvaluacion = async (req, res) => {
     try{
@@ -199,6 +202,79 @@ export const listadoEvaluacions = async (req, res) => {
             success: true,
             message: "Se encontraron todos las evaluacions exitosamente.",
             outcome: evaluations
+        })
+    }
+}
+
+export const asignarEvaluacionEmpleado = async (req, res) => {
+    try{
+        //Datos de la evaluación que vienen en el cuerpo de la petición
+        var data = req.body
+
+        //Primero busco la informacion del empleado para obtener su correo electronico
+        //para enviarle la notificacion de que tiene una evaluacion pendiente
+        const employee = await Employees.findById(
+            data.empleado, 
+            "name\
+            lastName\
+            email\
+            evaluaciones"
+        ).exec()
+
+        //Luego busco la informacion de la evaluacion ya que se debe actualizar al empleado
+        //para guardar la evaluacion, con sus preguntas para posteriormente actualizarla con las respuestas
+        //TODAS las evaluaciones recien asignadas tienen en su campo "evaluaciones" un valor "respondida"
+        //donde siempre sera false (o sea que no la ha respondido) hasta que guarde las preguntas
+        //esto facilita buscar las evaluaciones al momento de ser contestadas
+        const evaluation = await Evaluacion.findById(
+            data.evaluacion,
+            'limitDate'
+        ).populate(
+            {
+                path: 'preguntas',
+                select: '_id'
+            }
+        ).exec()
+
+        //Se actualiza al empleado con la informacion de la nueva evaluacion
+        let respuestas = []
+        for(let i=0;i<evaluation.preguntas.length;i++){
+            respuestas.push({
+                "pregunta":evaluation.preguntas[i],
+                "respuesta":null
+            })
+        }
+        
+        employee.evaluaciones.push(
+            {
+                "evaluacion":data.evaluacion,
+                "respuestas":respuestas,
+                "respondida":false
+            }
+        )
+
+        await Employees.findByIdAndUpdate(data.empleado,employee,{upsert:false}).exec()
+
+        //Por ultimo se envia un correo, sencillo, en donde se le notifica al empleado que tiene
+        //una evaluacion penditente a ser repondida
+        enviarCorreo(
+            employee.email,
+            `${employee.name} ${employee.lastName}`,
+            moment(evaluation.limitDate).format('DD-MM-YYYY')
+        )
+
+        return res.status(200).send({
+            success: true,
+            message: "Se encontraron todos los empleados exitosamente.",
+            outcome: []
+        })
+    }catch(err){
+        console.log(err)
+        //Mensaje de error por si no se pudo registrar la evaluación
+        return res.status(400).send({
+            success: false,
+            message: "Error al intentar asignar un empleado a la evaluación, por favor intente nuevamente.",
+            outcome: []
         })
     }
 }

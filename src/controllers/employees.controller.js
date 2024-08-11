@@ -135,21 +135,21 @@ export const detalleEmpleado = async (req, res) => {
     
     //Consulta para traer el detalle del empleado
     var existingEmployees = await Employees.findById(
-            data.id, 
-            "name\
-            lastName\
-            dni\
-            department\
-            email\
-            is_active\
-            yearsExperience\
-            educationInfo.schoolName\
-            educationInfo.graduationYear\
-            educationInfo.degree\
-            pastJobsInfo.jobName\
-            pastJobsInfo.yearWorkingThere\
-            pastJobsInfo.jobDescription"
-        ).exec()
+        data.id, 
+        "name\
+        lastName\
+        dni\
+        department\
+        email\
+        is_active\
+        yearsExperience\
+        educationInfo.schoolName\
+        educationInfo.graduationYear\
+        educationInfo.degree\
+        pastJobsInfo.jobName\
+        pastJobsInfo.yearWorkingThere\
+        pastJobsInfo.jobDescription"
+    ).exec()
         
     if(!existingEmployees){
         //Validación por si el empleado no existe retorne un mensaje de error
