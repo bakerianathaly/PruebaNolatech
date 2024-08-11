@@ -48,11 +48,21 @@ const employeesSchema = new Schema({
         ],
         required:true
     },
+    evaluaciones: [
+        {
+            evaluacion: { type: mongoose.Schema.Types.ObjectId, ref: 'Evaluacion' },
+            respuestas: [{
+                pregunta: { type: mongoose.Schema.Types.ObjectId, ref: 'Preguntas' },
+                respuesta: { type: mongoose.Schema.Types.ObjectId, ref: 'Respuestas' }
+            }],
+            respondida: { type: Boolean } //Donde "true" es que la respondio y "false" que no la ha respondido
+        }
+    ],
     is_active: {
         type: Boolean,
         default: true
     }
-});
+})
 
 const Employees = mongoose.model('Employees', employeesSchema);
 export {Employees}

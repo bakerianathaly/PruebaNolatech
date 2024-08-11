@@ -25,7 +25,7 @@ const evaluacionSchema = new Schema({
         type: Boolean,
         default: true
     }
-});
+})
 
 const Evaluacion = mongoose.model('Evaluacion', evaluacionSchema);
 export {Evaluacion}

@@ -21,7 +21,7 @@ const preguntasSchema = new Schema({
         type: Boolean,
         default: true
     }
-});
+})
 
 const Preguntas = mongoose.model('Preguntas', preguntasSchema);
 export {Preguntas}
