@@ -1,71 +1,62 @@
 //Models 
-import {Employees} from '../models/employees.js'
+import {Evaluacion} from '../models/evaluacion.js'
 
-export const registroEmpleado = async (req, res) => {
+export const registroEvaluacion = async (req, res) => {
     try{
-        //Datos de el empleado que vienen en el cuerpo de la petición
+        //Datos de el Evaluacion que vienen en el cuerpo de la petición
         var data = req.body
 
-        //Consulta para ver si el empleado ya existe
-        const existingEmployee = await Employees.findOne({ dni: data.dni}).exec()
-        if(existingEmployee){
+        //Consulta para ver si el Evaluacion ya existe con el nombre y el periodo
+        const existingEvaluacion = await Evaluacion.findOne({ name: data.name, periodo: data.periodo}).exec()
+        if(existingEvaluacion){
             return res.status(409).send({
                 success: false,
-                message:"Ya existe un empleado con el dni colocado.",
+                message:"Ya existe una evaluación con ese nombre en ese periodo.",
                 outcome: []
             }) 
         }
         
-        //Validación para ver si el email tiene los caracteres/formato valido    
-        if(/^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i.test(data.email) != true){
-            return res.status(406).send({
-                success: false,
-                message:"El correo tiene un formato erroneo.",
-                outcome: []
-            })
-        }
-        
-        //Se intenta registrar el empleado creando un objeto del modelo, luego de crear el objeto se envia a registrarse en la BD
+        //Se intenta registrar el Evaluacion creando un objeto del modelo, luego de crear el objeto se envia a registrarse en la BD
         //En caso de que no ocurra ningun error se regresa un status 200 de exito
-        var newEmployees = new Employees(data)
-        await newEmployees.save()
+        var newEvaluacion = new Evaluacion(data)
+        await newEvaluacion.save()
         return res.status(200).send({
             success: true,
-            message: "Se registro el empleado exitosamente,",
+            message: "Se registro el Evaluacion exitosamente,",
             outcome: []
         })
     }catch(err){
-        //Mensaje de error por si no se pudo registrar el empleado
+        //Mensaje de error por si no se pudo registrar el Evaluacion
         return res.status(204).send({
             success: false,
-            message: "Erro al intentar crear el empleado, por favor intente nuevamente.",
+            message: "Erro al intentar crear el Evaluacion, por favor intente nuevamente.",
             outcome: []
         })
     }
     
 }
 
-export const updateEmpleado = async (req, res) =>{
+export const updateEvaluacion = async (req, res) =>{
     try{
-        //Datos de el empleado que vienen en el cuerpo de la petición
+        //Datos de el Evaluacion que vienen en el cuerpo de la petición
         var datosActualizar = req.body
 
-        // Se valida, por precaucion, que el id del empleado venga en la datosActualizar
+        // Se valida, por precaucion, que el id del Evaluacion venga en la datosActualizar
         if(!datosActualizar.id){
             return res.status(409).send({
                 success: false,
-                message:"El identificador del empleado no fue enviado.",
+                message:"El identificador del Evaluacion no fue enviado.",
                 outcome: []
             }) 
         }
 
-        //Consulta para ver si el empleado existe 
-        var existingEmployee = await Employees.findOne({_id:datosActualizar.id, is_active: true}).exec() 
-        //Validación por si el empleado no existe retorne un mensaje de error
+        //Consulta para ver si el Evaluacion existe 
+        var existingEmployee = await Evaluacion.findOne({_id:datosActualizar.id, is_active: true}).exec() 
+        //Validación por si el Evaluacion no existe retorne un mensaje de error
         if(!existingEmployee){
             return res.status(409).send({
                 success: false,
-                message:"El empleado al cual se intenta actualizar no existe.",
+                message:"El Evaluacion al cual se intenta actualizar no existe.",
                 outcome: []
             }) 
         }
@@ -83,7 +74,7 @@ export const updateEmpleado = async (req, res) =>{
             }
 
             //Consulta para ver si el correo ya existe 
-            const existingEmail = await Employees.findOne({ email: datosActualizar.email}).exec()
+            const existingEmail = await Evaluacion.findOne({ email: datosActualizar.email}).exec()
             if(existingEmail){
                 //Validación para ver si el email o el username existen el la BD
                 return res.status(409).send({
@@ -97,13 +88,13 @@ export const updateEmpleado = async (req, res) =>{
         //Validacion del dni, se verifica si ya existe
         if(datosActualizar.dni != undefined){
             //Consulta para ver si alguno registro en la BD tiene el dni
-            const existingDni = await Employees.findOne({ dni: datosActualizar.dni}).exec() 
+            const existingDni = await Evaluacion.findOne({ dni: datosActualizar.dni}).exec() 
 
             if(existingDni){
                 //Validación para ver si el email o el dni existen el la BD
                 return res.status(409).send({
                     success: false,
-                    message:"El dni del empleado registrado ya existe.",
+                    message:"El dni del Evaluacion registrado ya existe.",
                     outcome: []
                 }) 
             }
@@ -112,29 +103,29 @@ export const updateEmpleado = async (req, res) =>{
         // Actualiza solo los campos que están presentes en datosActualizar
         Object.assign(existingEmployee,datosActualizar)
     
-        //Se intenta hacer la actualización de los datos del empleado, buscando por el ID del mismo y enviando los datos
-        Employees.findByIdAndUpdate(datosActualizar.id,existingEmployee,{upsert:true}).exec()
+        //Se intenta hacer la actualización de los datos del Evaluacion, buscando por el ID del mismo y enviando los datos
+        Evaluacion.findByIdAndUpdate(datosActualizar.id,existingEmployee,{upsert:true}).exec()
         return res.status(200).send({
             success: true,
-            message: "La actualización de los datos del empleado fue exitosamente.",
+            message: "La actualización de los datos del Evaluacion fue exitosamente.",
             outcome: []
         })
     }catch(err){
-        //Mensaje de error por si no se pudo registrar el empleado
+        //Mensaje de error por si no se pudo registrar el Evaluacion
         return res.status(204).send({
             success: false,
-            message: "Erro al intentar actualizar el empleado, por favor intente nuevamente.",
+            message: "Erro al intentar actualizar el Evaluacion, por favor intente nuevamente.",
             outcome: []
         })
     }
     
 }
 
-export const detalleEmpleado = async (req, res) => {
+export const detalleEvaluacion = async (req, res) => {
     let data = req.params
     
-    //Consulta para traer el detalle del empleado
-    var existingEmployees = await Employees.findById(
+    //Consulta para traer el detalle del Evaluacion
+    var existingEvaluacion = await Evaluacion.findById(
             data.id, 
             "name\
             lastName\
@@ -151,27 +142,40 @@ export const detalleEmpleado = async (req, res) => {
             pastJobsInfo.jobDescription"
         ).exec()
         
-    if(!existingEmployees){
-        //Validación por si el empleado no existe retorne un mensaje de error
+    if(!existingEvaluacion){
+        //Validación por si el Evaluacion no existe retorne un mensaje de error
         return res.status(204).send({
             success: false,
-            message: "El empleado seleccionado no existe.",
+            message: "El Evaluacion seleccionado no existe.",
             outcome: []
         })
     }
     else{
+        let datos= {
+            //JSON de los datos del Evaluacion que seran retornados
+            id:existingEvaluacion.id,
+            name: existingEvaluacion.name,
+            lastName: existingEvaluacion.lastName,
+            dni: existingEvaluacion.email,
+            email: existingEvaluacion.role,
+            department: existingEvaluacion.username,
+            yearsExperience: existingEvaluacion.yearsExperience,
+            educationInfo: existingEvaluacion.educationInfo,
+            pastJobsInfo: existingEvaluacion.pastJobsInfo
+        }
+       
         //Retorno de mensaje de exito
         return res.status(200).send({
             success: true,
-            message: "Se encontro el detalle del empleado exitosamente.",
-            outcome: [existingEmployees]
+            message: "Se encontro el detalle del Evaluacion exitosamente.",
+            outcome: [datos]
         })
     }
 }
 
-export const listadoEmpleados = async (req, res) => {
-    //Consulta para traer el detalle del empleado
-    const empleados = await Employees.find(
+export const listadoEvaluacions = async (req, res) => {
+    //Consulta para traer el detalle del Evaluacion
+    const Evaluacions = await Evaluacion.find(
             {}, 
             "name \
             lastName \
@@ -188,11 +192,11 @@ export const listadoEmpleados = async (req, res) => {
             pastJobsInfo.jobDescription"
         ).exec();
  
-    if(empleados.length == 0){
-        //Validación por si el empleado no existe retorne un mensaje de error
+    if(Evaluacions.length == 0){
+        //Validación por si el Evaluacion no existe retorne un mensaje de error
         return res.status(204).send({
             success: false,
-            message: "No existen empleados en el sistema.",
+            message: "No existen Evaluacions en el sistema.",
             outcome: []
         })
     }
@@ -200,8 +204,8 @@ export const listadoEmpleados = async (req, res) => {
         //Retorno de mensaje de exito
         return res.status(200).send({
             success: true,
-            message: "Se encontraron todos los empleados exitosamente.",
-            outcome: empleados
+            message: "Se encontraron todos los Evaluacions exitosamente.",
+            outcome: Evaluacions
         })
     }
 }

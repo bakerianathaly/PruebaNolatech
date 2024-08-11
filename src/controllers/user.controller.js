@@ -75,7 +75,7 @@ export const registroUsuario = async (req, res) => {
             })
         }catch(err){
             //Mensaje de error por si no se pudo registrar el usuario
-            return res.status(404).send({
+            return res.status(204).send({
                 success: false,
                 message: "Erro al intentar crear el usuario, por favor intente nuevamente.",
                 outcome: []
@@ -137,7 +137,7 @@ export const login = async (req, res) => {
     }catch(err){
         console.log(err)
         //Mensaje de error por si no se pudo registrar el usuario
-        return res.status(404).send({
+        return res.status(204).send({
             success: false,
             message: "El inicio de sesión no pudo proceder debido a un error",
             outcome: []
@@ -248,7 +248,7 @@ export const updateUser = async (req, res) =>{
         })
     }catch(err){
         //Mensaje de error por si no se pudo registrar el usuario
-        return res.status(404).send({
+        return res.status(204).send({
             success: false,
             message: "Erro al intentar actualizar el usuario, por favor intente nuevamente.",
             outcome: []
@@ -281,7 +281,7 @@ export const deleteUser = async (req, res) => {
         }catch(err){
             console.log(err)
             //Mensaje de error por si no se pudo registrar el usuario
-            return res.status(404).send({
+            return res.status(204).send({
                 success: false,
                 message: "Error al desactivar al usuario, por favor intente nuevamente",
                 outcome: []
@@ -297,7 +297,7 @@ export const detalleUsuario = async (req, res) => {
     var existingUser = await User.findById(data.id).exec() 
     if(!existingUser){
         //Validación por si el usuario no existe retorne un mensaje de error
-        return res.status(404).send({
+        return res.status(204).send({
             success: false,
             message: "El usuario seleccionado no existe.",
             outcome: []
@@ -329,7 +329,7 @@ export const listadoUsuarios = async (req, res) => {
 
     if(usuarios.length == 0){
         //Validación por si el usuario no existe retorne un mensaje de error
-        return res.status(404).send({
+        return res.status(204).send({
             success: false,
             message: "No existen usuarios en el sistema.",
             outcome: []
