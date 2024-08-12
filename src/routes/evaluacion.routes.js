@@ -1,7 +1,7 @@
 import express from 'express'
 
 import {
-    registroEvaluacion,updateEvaluacion,detalleEvaluacion,listadoEvaluacions,asignarEvaluacionEmpleado
+    registroEvaluacion,updateEvaluacion,detalleEvaluacion,listadoEvaluacions,asignarEvaluacionEmpleado,guardarEvaluacion
 } from '../controllers/index.controller.js'
 import {jwtValidator} from '../middlewares/jwt.js'
 import {roleValidator} from '../middlewares/roleValidator.js'
@@ -45,8 +45,54 @@ const evaluationsRouter = express.Router()
  */
 evaluationsRouter.post('/', jwtValidator,roleValidator(['ADMIN','MANAGER'], 'crear una evaluacion'),registroEvaluacion)
 
-
-//evaluationsRouter.post('/:id/submit', jwtValidator,roleValidator(['ADMIN','MANAGER','EMPLEADO'], 'contestar una evaluación'),registroEvaluacion)
+/**
+ * @swagger
+ * /api/evaluations/{id}/submit:
+ *   post:
+ *     summary: Guardar respuestas
+ *     description: Guardar respuestas de una evaluación que tiene un emepleado
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de la evaluación a buscar
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               empleado:
+ *                 type: string
+ *                 format: ObjectId
+ *               respuestas:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     pregunta:
+ *                       type: string
+ *                       format: ObjectId
+ *                       description: Id de la pregunta que se esta respondiendo
+ *                     valor:
+ *                       type: integer
+ *                       description: Valor dado a esa respuesta de la pregunta
+ *     responses:
+ *       200:
+ *         description: Se guardaron las respuestas a la evaluación correctamente
+ *       204:
+ *         description: El empleado no tiene evaluaciones pendientes a responder
+ *       400:
+ *         description: Error al intentar guardar las respuestas de la evaluación
+ *       409:
+ *         description: Todas las preguntas de la evaluacion deben ser respondidas o El rango respondido para una de las preguntas no es la de la escala permitida para la misma 
+ *       422:
+ *         description: El identificador de la evaluación o del empleado o las respuestas no fueron enviadas
+ */
+evaluationsRouter.post('/:id/submit', jwtValidator,roleValidator(['ADMIN','MANAGER','EMPLEADO'], 'contestar una evaluación'),guardarEvaluacion)
 
 /**
  * @swagger

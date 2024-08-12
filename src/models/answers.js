@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 //Esquema de mongoose para los datos en formato JSON 
 const respuestasSchema = new Schema({
     valor: {
-        type: mixed,
+        type: Number,
         required: true
     }
 })

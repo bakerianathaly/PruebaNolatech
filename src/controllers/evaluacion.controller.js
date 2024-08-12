@@ -4,6 +4,8 @@ import {periodsTime} from '../utils/common.js'
 import {enviarCorreo} from '../utils/email.js'
 import {Employees} from '../models/employees.js'
 import moment from 'moment'
+import { Preguntas } from '../models/questions.js'
+import { Respuestas } from '../models/answers.js'
 
 export const registroEvaluacion = async (req, res) => {
     try{
@@ -285,6 +287,106 @@ export const asignarEvaluacionEmpleado = async (req, res) => {
         return res.status(400).send({
             success: false,
             message: "Error al intentar asignar un empleado a la evaluación, por favor intente nuevamente.",
+            outcome: []
+        })
+    }
+}
+
+export const guardarEvaluacion = async (req,res) => {
+    try{
+        //Datos de la evaluación que vienen en el cuerpo de la petición
+        var data = req.body
+        var evaluacion = req.params.id
+            
+        //Validacion para verificar si ambos ID fueron enviados
+        if(data.empleado == '' || 
+            evaluacion == '' || 
+            data.empleado == undefined || 
+            evaluacion == undefined ||
+            data.respuestas.length < 1
+        ){
+            return res.status(422).send({
+                success: false,
+                message:"El identificador de la evaluación o del empleado o las respuestas no fueron enviadas.",
+                outcome: []
+            }) 
+        }
+
+        //Primero busco la informacion del empleado para obtener las evaluaciones que tiene
+        const employee = await Employees.findById(
+            data.empleado, 
+            "name\
+            lastName\
+            email\
+            evaluaciones"
+        ).exec()
+
+        //Busco, entre las evaluaciones que tiene asignada el empleado, la que corresponde a la que esta
+        //llenando y no haya respondido
+        let evaluacionResponder = {}
+        let employeeEvaluations = employee.evaluaciones
+        console.log(employeeEvaluations)
+        for(let i=0;i<employeeEvaluations.length;i++){
+            if(employeeEvaluations[i].evaluacion == evaluacion && employeeEvaluations[i].respondida == false){
+                evaluacionResponder = employeeEvaluations[i]
+                //Genero un nuevo array con todos las evaluaciones del empledo MENOS la que intenta actualizar
+                employeeEvaluations.splice(i,1)
+            }
+        }
+        //Validacion por si el empleado esta intentando guardar unas respuestas y no tiene evaluaciones pendientes
+        if(JSON.stringify(evaluacionResponder) === '{}'){
+            return res.status(204).send({
+                success: false,
+                message: "El empleado no tiene evaluaciones pendientes a responder.",
+                outcome: []
+            })
+        }
+
+        //Valido que se hayan respondido la misma cantidad de preguntas que las que tiene la evaluacion y que la respuesta
+        //corresponda al rango de la pregunta.
+        if(evaluacionResponder.respuestas.length != data.respuestas.length){
+            return res.status(409).send({
+                success: false,
+                message: "Todas las preguntas de la evaluacion deben ser respondidas.",
+                outcome: []
+            })
+        }
+
+        for(let i=0;i<data.respuestas.length;i++){
+            let question = await Preguntas.findById(data.respuestas[i].pregunta)
+            if(!(question.escala.some(item => item.valor === data.respuestas[i].valor))){
+                return res.status(409).send({
+                    success: false,
+                    message: "El rango respondido para una de las preguntas no es la de la escala permitida para la misma.",
+                    outcome: []
+                })
+            }
+            //Luego de la validacion por rango, guardo la respuesta y voy armando lo que voy a actualizar en la db
+            let answer = new Respuestas({"valor":data.respuestas[i].valor})
+            let answerInDb =await answer.save()
+            data.respuestas[i].respuesta = answerInDb._id
+            delete data.respuestas[i].valor
+        }
+        
+        //Agrego la evaluacion respondida
+        data.respondida = true
+        data.evaluacion = evaluacion
+        employeeEvaluations.push(data)
+        
+        //Actualizo al empleado con la informacion que respondio
+        await Employees.findByIdAndUpdate(data.empleado,{$set: {'evaluaciones':employeeEvaluations}},{upsert:false}).exec()
+
+        return res.status(200).send({
+            success: true,
+            message: "Se guardaron las respuestas a la evaluación correctamente.",
+            outcome: []
+        })
+    }catch(err){
+        console.log(err)
+        //Mensaje de error por si no se pudo registrar la evaluación
+        return res.status(400).send({
+            success: false,
+            message: "Error al intentar guardar las respuestas de la evaluación, por favor intente nuevamente.",
             outcome: []
         })
     }

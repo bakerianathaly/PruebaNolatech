@@ -5,7 +5,7 @@ import { registroEmpleado,updateEmpleado,detalleEmpleado,listadoEmpleados } from
 //Preguntas
 import { registroPregunta,updatePregunta,detallePregunta,listadoPreguntas } from './questions.controller.js'
 //Evaluaciones
-import { registroEvaluacion,updateEvaluacion,detalleEvaluacion,listadoEvaluacions,asignarEvaluacionEmpleado } from './evaluacion.controller.js'
+import { registroEvaluacion,updateEvaluacion,detalleEvaluacion,listadoEvaluacions,asignarEvaluacionEmpleado,guardarEvaluacion } from './evaluacion.controller.js'
 
 export {
     //Usuarios
@@ -15,5 +15,5 @@ export {
     //Preguntas
     registroPregunta,updatePregunta,detallePregunta,listadoPreguntas,
     //Evaluaciones
-    registroEvaluacion,updateEvaluacion,detalleEvaluacion,listadoEvaluacions,asignarEvaluacionEmpleado
+    registroEvaluacion,updateEvaluacion,detalleEvaluacion,listadoEvaluacions,asignarEvaluacionEmpleado,guardarEvaluacion
 }
