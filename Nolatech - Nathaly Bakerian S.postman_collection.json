@@ -1,0 +1,593 @@
+{
+	"info": {
+		"_postman_id": "83805068-ff86-4eac-9715-9728d313c103",
+		"name": "Nolatech - Nathaly Bakerian S",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9357366"
+	},
+	"item": [
+		{
+			"name": "USUARIO",
+			"item": [
+				{
+					"name": "[POST] Crear un usuario",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Sammi\",\n    \"lastName\":\"Scovino\",\n    \"password\":\"Pruebas123.\",\n    \"email\":\"sammiscovino\",\n    \"username\":\"sammiscovino\",\n    \"role\":\"manager\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3005/api/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[POST] Login de usuario",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\":\"sammiscovino\",\n    \"password\": \"Prueba123.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3005/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[PUT] Edicion de usuario",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"66b634071ea11d9c269a873c\",\n    \"name\":\"Maria daniela\",\n    \"lastName\":\"Scovino\",\n    \"password\":\"Pruebas123.\",\n    \"email\":\"sammiscovino\",\n    \"username\":\"sammiscovino\",\n    \"role\":\"manager\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3005/api/auth/update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"auth",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[PUT] Desactivacion de usuario",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"66b634071ea11d9c269a873c\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3005/api/auth/desactivarUsuario",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"auth",
+								"desactivarUsuario"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[GET] Detalle del usuario",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3005/api/auth/detalleUsuario/66b634071ea11d9c269a873c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"auth",
+								"detalleUsuario",
+								"66b634071ea11d9c269a873c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[GET] Listado de todos los usuarios",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3005/api/auth/listaUsuarios",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"auth",
+								"listaUsuarios"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "EMPLEADO",
+			"item": [
+				{
+					"name": "[POST] Crear un empleado",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Henry\",\n    \"lastName\":\"Cavill\",\n    \"dni\":\"123456\",\n    \"email\":\"superman@gmail.com\",\n    \"department\":\"Actuacion\",\n    \"yearsExperience\":10,\n    \"educationInfo\":[\n        {\n            \"schoolName\": \"Escuela de Actuacion ACME\",\n            \"graduationYear\": 2013,\n            \"degree\": \"Actor\"\n        },\n        {\n            \"schoolName\": \"High School Musical\",\n            \"graduationYear\": 2005,\n            \"degree\": \"Secundaria\"\n        }\n    ],\n    \"pastJobsInfo\":[\n        {\n            \"jobName\": \"Papel en Superman\",\n            \"yearWorkingThere\": 5,\n            \"jobDescription\": \"Fue superman\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3005/api/employees/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"employees",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[PUT] Edicion de empleado",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{   \n    \"id\":\"66b6c671e12cdeebbebc84c9\",\n    \"name\":\"Henry\",\n    \"lastName\":\"Cavill\",\n    \"dni\":\"123456\",\n    \"email\":\"superman@gmail.com\",\n    \"department\":\"Actuacion\",\n    \"yearsExperience\":10,\n    \"educationInfo\":[\n        {\n            \"schoolName\": \"Escuela de Actuacion ACME\",\n            \"graduationYear\": 2013,\n            \"degree\": \"Actor\"\n        },\n        {\n            \"schoolName\": \"High School Musical\",\n            \"graduationYear\": 2005,\n            \"degree\": \"Secundaria\"\n        }\n    ],\n    \"pastJobsInfo\":[\n        {\n            \"jobName\": \"Papel en Superman\",\n            \"yearWorkingThere\": 5,\n            \"jobDescription\": \"Fue superman\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3005/api/employees/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"employees",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[GET] Detalle del empleado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3005/api/employees/66b6c671e12cdeebbebc84c9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"employees",
+								"66b6c671e12cdeebbebc84c9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[GET] Listado de todos los empleados",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3005/api/employees/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"employees",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PREGUNTAS",
+			"item": [
+				{
+					"name": "[POST] Crear una pregunta",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"question\":\"Calidad en el trabajo\",\n    \"tipo\":\"multiple\",\n    \"escala\":[\n        {\n            \"texto\": \"Satisfecho\",\n            \"valor\": 3\n        },\n        {\n            \"texto\": \"Muy satisfecho\",\n            \"valor\": 5\n        },\n        {\n            \"texto\": \"Insatisfecho\",\n            \"valor\": 1\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3005/api/questions/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"questions",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[PUT] Edicion de una pregunta",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{   \n    \"id\":\"66b8065347f0688d96ff103c\",\n    \"question\":\"Calidad en el trabajo\",\n    \"tipo\":\"multiple\",\n    \"escala\":[\n        {\n            \"texto\": \"Satisfecho\",\n            \"valor\": 3\n        },\n        {\n            \"texto\": \"Muy satisfecho\",\n            \"valor\": 5\n        },\n        {\n            \"texto\": \"Insatisfecho\",\n            \"valor\": 1\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3005/api/questions/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"questions",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[GET] Detalle de la pregunta",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3005/api/questions/66b8065347f0688d96ff103c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"questions",
+								"66b8065347f0688d96ff103c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[GET] Listado de todas las preguntas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3005/api/questions/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"questions",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "EVALUACION",
+			"item": [
+				{
+					"name": "[POST] Crear una evaluacion",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"EVALUACION 2 2024\",\n    \"periodo\":\"TRIMESTRAL\",\n    \"limitDate\":\"10-09-2024\",\n    \"preguntas\":[\n        \"66b808fe85172a0b2ad3f9c9\",\n        \"66b808cb85172a0b2ad3f9b1\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3005/api/evaluations/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"evaluations",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[POST] Asignar una evaluacion a un empleado",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"empleado\":\"66b6c671e12cdeebbebc84c9\",\n    \"evaluacion\":\"66b810c155df62ba73db3c66\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3005/api/evaluations/asignar/evaluacion",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"evaluations",
+								"asignar",
+								"evaluacion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[PUT] Edicion de una evaluacion",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\":\"66b810c155df62ba73db3c66\",\n    \"name\":\"EVALUACION 2 2024\",\n    \"periodo\":\"TRIMESTRAL\",\n    \"limitDate\":\"10-09-2024\",\n    \"preguntas\":[\n        \"66b808fe85172a0b2ad3f9c9\",\n        \"66b808cb85172a0b2ad3f9b1\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3005/api/evaluations/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"evaluations",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[GET] Detalle de una evaluacion",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3005/api/evaluations/66b810c155df62ba73db3c66",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"evaluations",
+								"66b810c155df62ba73db3c66"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[GET] Listado de todas las evaluaciones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3005/api/evaluations/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"evaluations",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[POST] Guardar respuestas de una evaluacion",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"empleado\":\"66b6c671e12cdeebbebc84c9\",\n    \"respuestas\":[\n        {\n            \"pregunta\":\"66b808fe85172a0b2ad3f9c9\",\n            \"valor\":3\n        },\n        {\n            \"pregunta\":\"66b808cb85172a0b2ad3f9b1\",\n            \"valor\": 1\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3005/api/evaluations/66b810c155df62ba73db3c66/submit",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3005",
+							"path": [
+								"api",
+								"evaluations",
+								"66b810c155df62ba73db3c66",
+								"submit"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YjYzNDM1MWVhMTFkOWMyNjlhODc0NCIsInJvbGUiOiJNQU5BR0VSIiwidXNlcm5hbWUiOiJzYW1taXNjb3Zpbm8iLCJpYXQiOjE3MjMyMjc3OTd9.SGPDVSx7SSkPa8Kvgue67Dde1xD0TMTd-edBTc50K3E",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

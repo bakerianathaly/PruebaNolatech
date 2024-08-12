@@ -4,7 +4,9 @@ Desarrollar el backend de una API RESTful para un sistema de evaluación 360 gra
 
 ##### NOTA
 
-En todo proyecto las .env no se suben al repositorio... en este caso se subieron las que se necesitan exactamente para evitar problemas a la hora de levantar el proyecto
+En todo proyecto las .env no se suben al repositorio... en este caso se subieron las que se necesitan exactamente para evitar problemas a la hora de levantar el proyecto.
+
+A su vez en la base del proyecto, al mismo nivel de src, esta la colleccion de Postman con todas las rutas que tambien encontraran en el Swagger
 
 ## Swagger
 
