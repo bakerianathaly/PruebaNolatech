@@ -16,6 +16,7 @@ este levantado:
 - CRUD de preguntas
 - CRUD de evaluaciones
 - Envio de correo al empleado al momento de asignar una nueva evaluacion para su respuesta
+- Actualización de las evaluaciones del empleado cuando se esta guardando los datos de una evaluación que tenia pendiente
 
 ## Tech Stack
 
@@ -47,10 +48,37 @@ su unico requisiro es tener instalado y corriendo "Docker" y "npm" para poder le
 
     http://localhost:3005
 
+# Flujo recomendado para probar
 
-# Testing
+1. Crear un usuario: api/auth/register
 
-Para correr las pruebas se debe ejecutar el comando: 
+2. Login del usuario, para obtener el JWT: api/auth/login
+
+Tanto en el swagger como en la coleccion de postman, estas dos rutas estan libres del middleware del JWT para que pueda ser usadas (sobretodo el registro de usuario para poder registrar el primero).
+
+Luego de que se tenga el JWT se tiene que colocar en:
+
+POSTMAN:
+
+![alt text](image.png)
+
+SWAGGER
+
+![alt text](image-1.png)
+
+3. Crear un empleado: api/employees/
+
+NOTA: Se recomienda que al momento de crear un empleado se coloque un correo que utilicen, ya que en el endpoint 7 (asignar una evaluacion), se le manda un correo al empleado para que se le notifique que tiene una evaluacion pendiente c:
+
+4. Crear las preguntas: api/questions/
+
+5. Listar las preguntas (ya que se necesitan los ID para crear una evaluacion): api/questions/
+
+6. Crear una evaluacion: api/evaluations/
+
+7. Asignar una evaluacion a un empleado (se necesitan el ID de un empleado y el ID de una evaluacion): api/evaluations/asignar/evaluacion
+
+8. Responder una evaluacion (se necesitan el ID de ese empleado, el ID de la evaluacion que esta respondiendo y el ID de las preguntas de esa evaluacion ya que cada una lleva su valor): api/evaluations/{id evaluacion}/submit
 
 # Explicación de la estructura del proyecto y decisiones de diseño
 
@@ -77,6 +105,3 @@ Este proyecto ha sido estructurado de forma modular para facilitar la mantenibil
 /utils:
     Almacena funciones y utilidades que son utilizadas en diferentes partes del proyecto, como una funcion para 
     el envio de correos o unos enumerados que se llaman en distintas partes del codigo.
-
-/tests
-    Contiene las pruebas unitarias para asegurar la calidad del código y detectar errores temprano en el desarrollo.
