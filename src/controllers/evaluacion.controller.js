@@ -282,7 +282,6 @@ export const asignarEvaluacionEmpleado = async (req, res) => {
             outcome: []
         })
     }catch(err){
-        console.log(err)
         //Mensaje de error por si no se pudo registrar la evaluación
         return res.status(400).send({
             success: false,
@@ -325,7 +324,6 @@ export const guardarEvaluacion = async (req,res) => {
         //llenando y no haya respondido
         let evaluacionResponder = {}
         let employeeEvaluations = employee.evaluaciones
-        console.log(employeeEvaluations)
         for(let i=0;i<employeeEvaluations.length;i++){
             if(employeeEvaluations[i].evaluacion == evaluacion && employeeEvaluations[i].respondida == false){
                 evaluacionResponder = employeeEvaluations[i]
@@ -382,7 +380,6 @@ export const guardarEvaluacion = async (req,res) => {
             outcome: []
         })
     }catch(err){
-        console.log(err)
         //Mensaje de error por si no se pudo registrar la evaluación
         return res.status(400).send({
             success: false,

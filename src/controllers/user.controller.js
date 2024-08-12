@@ -135,7 +135,6 @@ export const login = async (req, res) => {
             
         })
     }catch(err){
-        console.log(err)
         //Mensaje de error por si no se pudo registrar el usuario
         return res.status(400).send({
             success: false,
@@ -278,7 +277,6 @@ export const deleteUser = async (req, res) => {
                 outcome: []
             }) 
         }catch(err){
-            console.log(err)
             //Mensaje de error por si no se pudo registrar el usuario
             return res.status(400).send({
                 success: false,

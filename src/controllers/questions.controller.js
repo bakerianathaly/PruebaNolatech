@@ -132,7 +132,6 @@ export const updatePregunta = async (req, res) =>{
             outcome: []
         })
     }catch(err){
-        console.log(err)
         //Mensaje de error por si no se pudo registrar la pregunta
         return res.status(400).send({
             success: false,
