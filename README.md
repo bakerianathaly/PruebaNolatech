@@ -2,6 +2,10 @@
 
 Desarrollar el backend de una API RESTful para un sistema de evaluación 360 grados de empleados remotos en una empresa de desarrollo de aplicaciones.
 
+##### NOTA
+
+En todo proyecto las .env no se suben al repositorio... en este caso se subieron las que se necesitan exactamente para evitar problemas a la hora de levantar el proyecto
+
 ## Swagger
 
 Para poder acceder a la documentacion Swagger se debe entrar a traves de esta URL una vez el proyecto 
